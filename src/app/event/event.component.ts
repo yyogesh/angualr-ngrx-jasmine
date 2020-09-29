@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Attendee } from '../models';
 import { EventService } from '../event.service';
+import { Observable } from 'rxjs';
+import { select, Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-event',
@@ -9,11 +11,12 @@ import { EventService } from '../event.service';
 })
 export class EventComponent implements OnInit {
   attendees: Attendee[] = [];
-
-  constructor(private _eventService: EventService) { }
+  spinner$: Observable<boolean>;
+  constructor(private _eventService: EventService, private _store: Store<any>) { }
 
   ngOnInit(): void {
     this.getAttendees();
+    this.spinner$ = this._store.pipe(select(state => state.spinner.isOn));
   }
 
   getAttendees() {
@@ -21,7 +24,15 @@ export class EventComponent implements OnInit {
   }
 
   addAttendee(attendee: Attendee) {
-    this.attendees = [...this.attendees, attendee]
+    this._store.dispatch({
+      type: 'startSpinner'
+    });
+    setTimeout(() => {
+      this.attendees = [...this.attendees, attendee];
+      this._store.dispatch({
+        type: 'stopSpinner'
+      });
+    }, 2000)
     console.log(this.attendees);
   }
 }

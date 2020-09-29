@@ -5,9 +5,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { EventModule } from './event/event.module';
-import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
-import { HttpClientModule } from '@angular/common/http';
-import { InMemoryDataService } from './mock.data.service';
+import { StoreModule } from '@ngrx/store';
+import { reducer } from './state/spinner.reducer';
 
 @NgModule({
   declarations: [
@@ -17,9 +16,10 @@ import { InMemoryDataService } from './mock.data.service';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule,
-    HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService, { delay: 100 }),
-    EventModule
+    EventModule,
+    StoreModule.forRoot({
+      spinner: reducer
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]
